@@ -45,8 +45,12 @@ class Player(pygame.sprite.Sprite):
         # AKA 1.4X -> 1X
         if self.direction.magnitude() > 0:
             self.direction = self.direction.normalize()
-        self.pos += self.direction * self.speed * dt
-        self.rect.center = self.pos
+
+        self.pos.x += self.direction.x * self.speed * dt
+        self.rect.centerx = self.pos.x
+
+        self.pos.y += self.direction.y * self.speed * dt
+        self.rect.centery = self.pos.y
 
     def update(self, dt): 
 
