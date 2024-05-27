@@ -23,9 +23,12 @@ class Player(pygame.sprite.Sprite):
 
         self.timers = {
             'tool_use': Timer(350, self.use_tool),
+            'tool_switch': Timer(200),
         }
 
-        self.selected_tool = 'axe'
+        self.tools = ['hoe', 'axe', 'water']
+        self.tool_index = 0
+        self.selected_tool = self.tools[self.tool_index]
 
     def use_tool(self):
         print(self.selected_tool)
@@ -102,6 +105,15 @@ class Player(pygame.sprite.Sprite):
                 self.timers['tool_use'].activate()
                 self.direction = pygame.math.Vector2()
                 self.frame_index = 0
+
+            # pygame counts one keypress as many keypresses
+            # hence the timer debounce
+            if keys[pygame.K_q] and not self.timers['tool_switch'].active:
+                self.timers['tool_switch'].activate()
+
+                self.tool_index = 0 if (self.tool_index == len(self.tools) - 1) else self.tool_index + 1
+
+                self.selected_tool = self.tools[self.tool_index]
 
     def get_status(self):
         
