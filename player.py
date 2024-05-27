@@ -106,7 +106,7 @@ class Player(pygame.sprite.Sprite):
     def get_status(self):
         
         # If we aren't moving, we are idle
-        if self.direction.magnitude == 0: 
+        if self.direction.magnitude() == 0: 
             self.status = f"{self.status.split('_')[0]}_idle"
         
         if self.timers['tool_use'].active:
