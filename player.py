@@ -24,14 +24,23 @@ class Player(pygame.sprite.Sprite):
         self.timers = {
             'tool_use': Timer(350, self.use_tool),
             'tool_switch': Timer(200),
+            'seed_use': Timer(350, self.use_seed),
+            'seed_switch': Timer(200),
         }
 
         self.tools = ['hoe', 'axe', 'water']
         self.tool_index = 0
         self.selected_tool = self.tools[self.tool_index]
 
+        self.seeds = ["corn", "tomato"]
+        self.seed_index = 0
+        self.selected_seed = self.seeds[self.seed_index]
+
     def use_tool(self):
-        print(self.selected_tool)
+        pass
+
+    def use_seed(self):
+        pass
 
     def update_timers(self):
         
@@ -110,10 +119,21 @@ class Player(pygame.sprite.Sprite):
             # hence the timer debounce
             if keys[pygame.K_q] and not self.timers['tool_switch'].active:
                 self.timers['tool_switch'].activate()
-
                 self.tool_index = 0 if (self.tool_index == len(self.tools) - 1) else self.tool_index + 1
-
                 self.selected_tool = self.tools[self.tool_index]
+
+            if keys[pygame.K_LCTRL]:
+                self.timers['seed_use'].activate()
+                self.direction = pygame.math.Vector2()
+                self.frame_index = 0
+                print("use seed")
+            
+            if keys[pygame.K_e]:
+                self.timers["seed_switch"].activate()
+                self.seed_index = 0 if (self.seed_index == len(self.seeds) - 1) else self.seed_index + 1
+                self.selected_seed = self.seeds[self.seed_index]
+                print(f"{self.selected_seed}")
+
 
     def get_status(self):
         
