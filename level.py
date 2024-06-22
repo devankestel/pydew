@@ -14,12 +14,6 @@ class Level:
         self.overlay = Overlay(self.player)
 
     def setup(self):
-        
-        Generic(
-            pos=(0,0), 
-            surf=pygame.image.load("graphics/world/ground.png").convert_alpha(), 
-            groups=self.all_sprites,
-            )
 
         # pos tuple (x, y) on screen
         self.player = Player(
@@ -27,9 +21,16 @@ class Level:
             self.all_sprites,
         )
 
+        Generic(
+            pos=(0,0), 
+            surf=pygame.image.load("graphics/world/ground.png").convert_alpha(), 
+            groups=self.all_sprites,
+            z=LAYERS["ground"]
+        )
+
     def run(self, dt):
         self.display_surface.fill('black')
-        self.all_sprites.custom_draw()
+        self.all_sprites.custom_draw(self.player)
         self.all_sprites.update(dt)
         self.overlay.display()
 
@@ -38,8 +39,17 @@ class CameraGroup(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
+        self.offset = pygame.math.Vector2()
 
-    def custom_draw(self):
-        
-        for sprite in self.sprites():
-            self.display_surface.blit(sprite.image, sprite.rect)
+    
+    def custom_draw(self, player):
+    # player is a param bc that is what we want the camera (viewport) to follow
+    # we want the player always in the center so all other sprites must offset around it
+        self.offset.x = player.rect.centerx - SCREEN_WIDTH / 2
+        self.offset.y = player.rect.centery - SCREEN_HEIGHT / 2
+        for layer_num in LAYERS.values():
+            for sprite in self.sprites():
+                if layer_num == sprite.z:
+                    offset_rect = sprite.rect.copy()
+                    offset_rect.center -= self.offset
+                    self.display_surface.blit(sprite.image, offset_rect)
