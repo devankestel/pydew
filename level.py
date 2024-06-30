@@ -17,14 +17,23 @@ class Level:
     def setup(self):
 
         tmx_data = load_pygame("data/map.tmx")
+        for layer in ["HouseFloor", "HouseFurnitureBottom"]:
+            for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
+                Generic(
+                    pos=(x*TILE_SIZE, y*TILE_SIZE),
+                    surf=surf,
+                    groups=self.all_sprites,
+                    z=LAYERS["house_bottom"],
+                )
 
-        for x, y, surf in tmx_data.get_layer_by_name("HouseFurnitureBottom").tiles():
-            Generic(
-                pos=(x*TILE_SIZE, y*TILE_SIZE),
-                surf=surf,
-                groups=self.all_sprites,
-                z=LAYERS["house_bottom"],
-            )
+        for layer in ["HouseWalls", "HouseFurnitureTop"]:
+            for x, y, surf in tmx_data.get_layer_by_name(layer).tiles():
+                Generic(
+                    pos=(x*TILE_SIZE, y*TILE_SIZE),
+                    surf=surf,
+                    groups=self.all_sprites,
+                    z=LAYERS["main"],
+                )
 
         # pos tuple (x, y) on screen
         self.player = Player(
