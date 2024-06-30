@@ -37,3 +37,14 @@ class Water(Generic):
     
     def update(self, dt):
         self.animate(dt)
+
+class WildFlower(Generic):
+
+    def __init__(self, pos, surf, groups, z=LAYERS["main"]):
+        super().__init__(pos, surf, groups, z)
+
+
+class Tree(Generic):
+
+    def __init__(self, pos, surf, groups, name, z=LAYERS["main"]):
+        super().__init__(pos, surf, groups, z)
