@@ -2,8 +2,9 @@ import pygame
 from settings import * 
 from player import Player
 from overlay import Overlay
-from sprites import Generic
+from sprites import Generic, Water
 from pytmx.util_pygame import load_pygame
+from support import * 
 
 class Level: 
 
@@ -34,6 +35,24 @@ class Level:
                     groups=self.all_sprites,
                     z=LAYERS["main"],
                 )
+
+        for x, y, surf in tmx_data.get_layer_by_name("Fence").tiles():
+                Generic(
+                    pos=(x*TILE_SIZE, y*TILE_SIZE),
+                    surf=surf,
+                    groups=self.all_sprites,
+                    z=LAYERS["main"],
+                )
+
+        water_frames = import_folder("graphics/water")
+        for x, y, surf in tmx_data.get_layer_by_name("Water").tiles():
+                Water(
+                    pos=(x*TILE_SIZE, y*TILE_SIZE),
+                    frames=water_frames,
+                    groups=self.all_sprites,
+                    z=LAYERS["main"],
+                )
+
 
         # pos tuple (x, y) on screen
         self.player = Player(
