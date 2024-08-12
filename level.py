@@ -12,6 +12,7 @@ class Level:
 
         self.display_surface = pygame.display.get_surface()
         self.all_sprites = CameraGroup()
+        self.collision_sprites = pygame.sprite.Group()
         self.setup()
         self.overlay = Overlay(self.player)
 
@@ -40,7 +41,7 @@ class Level:
                 Generic(
                     pos=(x*TILE_SIZE, y*TILE_SIZE),
                     surf=surf,
-                    groups=self.all_sprites,
+                    groups=[self.all_sprites, self.collision_sprites],
                     z=LAYERS["main"],
                 )
 
@@ -57,7 +58,7 @@ class Level:
                 Tree(
                     pos=(obj.x, obj.y),
                     surf=obj.image,
-                    groups=self.all_sprites,
+                    groups=[self.all_sprites, self.collision_sprites],
                     name=obj.name,
                     z=LAYERS["main"],
         )
@@ -66,7 +67,7 @@ class Level:
                 WildFlower(
                     pos=(obj.x, obj.y),
                     surf=obj.image,
-                    groups=self.all_sprites,
+                    groups=[self.all_sprites, self.collision_sprites],
                     z=LAYERS["main"],
         )
                 
@@ -77,6 +78,7 @@ class Level:
         self.player = Player(
             (640, 360),
             self.all_sprites,
+            self.collision_sprites,
         )
 
         Generic(

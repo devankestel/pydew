@@ -5,7 +5,7 @@ from timer import Timer
 
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, pos, group):
+    def __init__(self, pos, group, collision_sprites):
 
         super().__init__(group)
 
@@ -21,6 +21,10 @@ class Player(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center)
         self.speed = 200
+
+        # shrink the rectangle, while maintaining the center
+        self.hitbox = self.rect.copy().inflate(-126, -70)
+        self.collision_sprites = collision_sprites
 
         self.timers = {
             'tool_use': Timer(350, self.use_tool),
@@ -147,6 +151,26 @@ class Player(pygame.sprite.Sprite):
 
             self.status = f"{self.status.split('_')[0]}_{self.selected_tool}"
 
+    def collide(self, direction):
+        
+        for sprite in self.collision_sprites.sprites():
+
+            if hasattr(sprite, "hitbox"):
+                if sprite.hitbox.colliderect(self.hitbox):
+                    if direction == "horizontal":
+                        # player moving to the right, so we hit the left of the sprite
+                        if self.direction.x > 0:
+                            self.hitbox.right = sprite.hitbox.left
+                        # player moving to the left, so we hit the right of the sprite
+                        if self.direction.x < 0: 
+                            self.hitbox.left = sprite.hitbox.right
+                        self.rect.centerx = self.hitbox.centerx
+                        self.pos.x = self.hitbox.centerx
+
+
+                        
+
+    
     def move(self, dt):
         
         # adjust speed for diag movement by normalizing vector
@@ -155,10 +179,13 @@ class Player(pygame.sprite.Sprite):
             self.direction = self.direction.normalize()
 
         self.pos.x += self.direction.x * self.speed * dt
-        self.rect.centerx = self.pos.x
+        self.hitbox.centerx = round(self.pos.x)
+        self.rect.centerx = self.hitbox.centerx
+        self.collide("horizontal")
 
         self.pos.y += self.direction.y * self.speed * dt
-        self.rect.centery = self.pos.y
+        self.hitbox.centery = round(self.pos.y)
+        self.rect.centery = self.hitbox.centery
 
     def update(self, dt): 
 
